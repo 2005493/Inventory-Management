@@ -1,0 +1,84 @@
+import json
+from os import urandom
+fd = open("records.json", "w")
+records = {"100": {"name": "apple", "quantity": 100, "price": 10, "exported from": "INDIA"},
+           "101": {"name": "banana", "quantity": 80, "price": 10, "exported from": "USA"},
+           "102": {"name": "orange", "quantity": 80, "price": 10, "exported from": "UP"},
+           "103": {"name": "pinapple", "quantity": 80, "price": 10, "exported from": "AP"},
+           "104": {"name": "ps4", "quantity": 80, "price": 5000, "exported from": "CG"}}
+ent_record = json.dumps(records)
+fd.write(ent_record)
+fd.close
+
+while (True):
+    print(""">>>>>>>>>>MENU<<<<<<<<<\n1)ENTER THE NEW ITEM->PRESS 1\n2)CONTINOUE TO SHOPPING->PRESS 0""")
+    num1 = int(input())
+
+    if(num1 == 1):
+        ID_new = input("ENTER THE ID OF THE ITEM: ")
+        NAME_new = input("ENTER THE NAME OF THE ITEM: ")
+        QUANTITY_new = int(input("ENTER THE QUANTITY OF THE ITEM: "))
+        PRICE_new = input("ENTER THE PRICE: ")
+        EXPORTED_new = input(
+            "MENTION THE PLACE FROM WHERE THE ITEMS IS EXPORTED: ")
+        if ID_new in records.keys():
+            records[ID_new]["quantity"] = records[ID_new]["quantity"] + QUANTITY_new
+            records[ID_new]["price"] = PRICE_new
+            records[ID_new]["name"] = NAME_new
+            records[ID_new]["exported from"] = EXPORTED_new
+
+        else:
+            records[ID_new] = {"name": NAME_new, "quantity": QUANTITY_new,
+                               "price": PRICE_new, "exported from": EXPORTED_new}
+    elif(num1 == 0):
+        break
+user_define_in = open("records.json", "w")
+user_define_j = json.dumps(records)
+user_define_in.write(user_define_j)
+user_define_in.close()
+
+
+print(">>>>>>>BUYING ITEM FROM THE INVENTORY<<<<<<<\n\n")
+print("--------------------------------------------------")
+print(">>>>>>ITEM AVAILABLE<<<<<<<<<<<")
+records_buying = open("records.json", "r")
+read_me = records_buying.read()
+read_me_j = json.loads(read_me)
+records_buying.close()
+print(read_me_j)
+
+while True:
+    print("""MENU\nIF YOU WANT CONTINOUE SHOPPING PRESS ->1\nIF YOU WANT EXIT PRESS ->0""")
+    num_shopp = int(input(""))
+    if(num_shopp == 1):
+        ur_id = input("ENTER THE ID OF THE PRODUCT:")
+        ur_quantity = int(input("ENTER THE QUANTITY:"))
+        if(ur_id not in records.keys()):
+            print("ITEM NOT AVAILABLE!!!")
+            continue
+
+        if(records[ur_id]["quantity"] < ur_quantity):
+            print("NOT ENOUGH ITEMS!!!")
+            continue
+        print("NAME OF THE ITEM: ", records[ur_id]["name"])
+        print("QUANTITY:", ur_quantity)
+        print("PRICE YOU HAVE TO PAY:", records[ur_id]["price"]*ur_quantity)
+        records[ur_id]["quantity"] = records[ur_id]["quantity"]-ur_quantity
+        print(records)
+        price_change_j = json.dumps(records)
+        # in order to make changes in json file after user buys something from the inventory
+        price_change = open("records.json", "w")
+
+        price_change.write(price_change_j)
+        price_change.close()
+        
+        #sale={1:{"NAME":records[ur_id]["name"],"QUANTITY":ur_quantity,"PRICE": records[ur_id]["price"]*ur_quantity,"EXPORTED FROM":records[ur_id]["exported from"]}}
+        sale={"NAME":records[ur_id]["name"],"QUANTITY":ur_quantity,"PRICE": records[ur_id]["price"]*ur_quantity,"EXPORTED FROM":records[ur_id]["exported from"]}
+        price_change_j_sales = json.dumps(sale)
+        price_change_sales = open("sales.json", "a")
+
+        price_change_sales.write(price_change_j_sales)
+        price_change_sales.close()
+      
+    elif(num_shopp == 0):
+        break
